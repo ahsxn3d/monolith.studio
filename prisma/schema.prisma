@@ -1,0 +1,50 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+model Project {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  title         String
+  thumbnail_url String
+  description   String
+  purpose       String
+  audience      String
+  total_cost    Float
+  live_url      String
+  status        String   @default("ACTIVE") // 'ACTIVE' or 'COMPLETED'
+  category      String?
+  latency       String?
+  throughput    String?
+  tech_stack    String[]
+}
+
+model Order {
+  id              String   @id @default(uuid())
+  client_name     String
+  client_email    String
+  order_type      String   // 'BOOK_MEETING' or 'DIRECT_ORDER'
+  project_details String
+  status          String   @default("PENDING")
+  total_cost      Float    @default(0) // Revenue calculated from completed orders
+  created_at      DateTime @default(now())
+}
+
+model Lead {
+  id                String    @id @default(uuid())
+  client_name       String
+  client_email      String
+  summary           String?
+  selected_features String?
+  total_cost        String?
+  created_at        DateTime  @default(now())
+  type              String    @default("ESTIMATE")
+  status            String    @default("PENDING")
+  scheduled_date    DateTime?
+  scheduled_time    String?
+}

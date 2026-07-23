@@ -1,0 +1,6 @@
+{
+  "name": "Atmospheric SaaS Portfolio",
+  "description": "A premium single-page portfolio using Tailwind CSS and Framer Motion with an atmospheric glow-morphism aesthetic.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
