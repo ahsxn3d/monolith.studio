@@ -41,7 +41,7 @@ export default async function CallsPage() {
                   </td>
                 </tr>
               ) : (
-                calls.map((lead) => (
+                calls.map((lead: any) => (
                   <tr key={lead.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="p-4 font-medium text-white">{lead.client_name}</td>
                     <td className="p-4 text-slate-400">{lead.client_email}</td>
