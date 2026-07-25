@@ -62,14 +62,14 @@ export default function HomeClient({ productsSection }: { productsSection: React
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#030014] text-[#f1f1f1] font-sans antialiased relative pb-32 sm:pb-24 select-none">
+    <div className="min-h-[100dvh] w-full max-w-[100vw] overflow-x-hidden bg-[#030014] text-[#f1f1f1] font-sans antialiased relative pb-32 sm:pb-24 select-none">
 
       {/* -------------------- THE ATMOSPHERIC GLOWS -------------------- */}
       {/* Massive blurred radial gradients floating behind the UI */}
       <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-full max-w-[1200px] aspect-square bg-[radial-gradient(circle_at_center,rgba(217,70,239,0.15)_0,transparent_60%)] blur-[120px] rounded-full pointer-events-none z-0 overflow-hidden" />
-      <div className="absolute top-[400px] left-[10%] w-[500px] max-w-full h-[500px] bg-fuchsia-600/10 blur-[130px] rounded-full pointer-events-none z-0 overflow-hidden" />
-      <div className="absolute top-[1200px] right-[5%] w-[600px] max-w-full h-[600px] bg-fuchsia-600/5 blur-[150px] rounded-full pointer-events-none z-0 overflow-hidden" />
-      <div className="absolute bottom-[400px] left-[15%] w-[500px] max-w-full h-[500px] bg-fuchsia-600/5 blur-[150px] rounded-full pointer-events-none z-0 overflow-hidden" />
+      <div className="absolute top-[400px] left-[10%] w-full max-w-[500px] aspect-square bg-fuchsia-600/10 blur-[130px] rounded-full pointer-events-none z-0 overflow-hidden" />
+      <div className="absolute top-[1200px] right-[5%] w-full max-w-[600px] aspect-square bg-fuchsia-600/5 blur-[150px] rounded-full pointer-events-none z-0 overflow-hidden" />
+      <div className="absolute bottom-[400px] left-[15%] w-full max-w-[500px] aspect-square bg-fuchsia-600/5 blur-[150px] rounded-full pointer-events-none z-0 overflow-hidden" />
 
       {/* Decorative Grid Line System */}
       <div className="absolute inset-0 bg-grid-white bg-grid-glow pointer-events-none opacity-[0.25] z-0" />
@@ -100,7 +100,7 @@ export default function HomeClient({ productsSection }: { productsSection: React
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.2 }}
-            className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter"
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter break-words"
           >
             <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">Future-Noir</span>
             <br />
@@ -111,7 +111,7 @@ export default function HomeClient({ productsSection }: { productsSection: React
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.3 }}
-            className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-light"
+            className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-light break-words"
           >
             We engineer high-fidelity, unified web systems that feel like premium software. No templates. No latency. Just pure atmospheric code.
           </motion.p>
@@ -151,14 +151,14 @@ export default function HomeClient({ productsSection }: { productsSection: React
           className="w-full rounded-2xl md:rounded-3xl border border-white/10 bg-slate-950/40 backdrop-blur-2xl shadow-[0_0_50px_rgba(217,70,239,0.15)] overflow-hidden flex flex-col"
         >
           {/* Simulated window header bar */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-white/5 bg-slate-950/60 backdrop-blur-md text-xs z-10 relative">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500/40" />
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500/40" />
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/40" />
+          <div className="flex items-center justify-between px-4 md:px-6 py-3 border-b border-white/5 bg-slate-950/60 backdrop-blur-md text-xs z-10 relative overflow-hidden min-w-0 w-full">
+            <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+              <span className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-rose-500/40" />
+              <span className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-amber-500/40" />
+              <span className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-500/40" />
             </div>
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">AETHER_INTELLIGENCE_CENTER // V2.5</span>
-            <div className="w-12" />
+            <span className="text-[9px] md:text-[10px] font-mono text-slate-500 uppercase tracking-widest truncate px-2 md:px-4 flex-1 text-center min-w-0">AETHER_INTELLIGENCE_CENTER // V2.5</span>
+            <div className="w-8 md:w-12 shrink-0" />
           </div>
 
           <DashboardDemo />
