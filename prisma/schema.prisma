@@ -19,6 +19,7 @@ model Project {
   live_url      String
   status        String   @default("ACTIVE") // 'ACTIVE' or 'COMPLETED'
   category      String?
+  price         Int      @default(0)
   latency       String?
   throughput    String?
   tech_stack    String[]
