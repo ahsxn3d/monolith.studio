@@ -16,11 +16,18 @@ type DisplayProject = {
   techStack: string[];
   status: string;
   metrics: { latency: string; throughput: string };
+  category: string;
+  price: number;
 };
 
 export function DeploymentCatalog({ projects = [] }: { projects?: Project[] }) {
   const [selectedProject, setSelectedProject] = useState<DisplayProject | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const highestPrice = projects.reduce((max, p) => Math.max(max, p.price || 0), 0);
+  const [maxPrice, setMaxPrice] = useState(highestPrice > 0 ? highestPrice : 10000);
 
   useEffect(() => {
     setMounted(true);
@@ -50,8 +57,26 @@ export function DeploymentCatalog({ projects = [] }: { projects?: Project[] }) {
     metrics: {
       latency: p.latency || "142ms", 
       throughput: p.throughput || "420 req/s"
-    }
+    },
+    category: p.category || "Uncategorized",
+    price: p.price || 0,
   }));
+
+  const filteredProjects = displayProjects.filter(p => {
+    const matchesSearch = 
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.techStack.join(" ").toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const safeProjectCat = (p.category || "Uncategorized").toLowerCase();
+    const safeSelectedCat = selectedCategory.toLowerCase();
+    const matchesCategory = selectedCategory === "All" || safeProjectCat === safeSelectedCat;
+    
+    const safePrice = p.price || 0;
+    const matchesPrice = safePrice <= maxPrice;
+    
+    return matchesSearch && matchesCategory && matchesPrice;
+  });
 
   // Staggered entrance transition configurations
   const containerVariants = {
@@ -105,6 +130,60 @@ export function DeploymentCatalog({ projects = [] }: { projects?: Project[] }) {
         </p>
       </div>
 
+      {/* Unified Filter Control Panel - Ultra-compact Glassmorphism */}
+      <div className="flex flex-col gap-4 p-4 md:p-6 mb-12 bg-slate-950/40 backdrop-blur-xl border border-violet-500/20 rounded-2xl w-full relative group overflow-hidden">
+        {/* Background Glow Effect */}
+        <div className="absolute -inset-px bg-gradient-to-r from-violet-500/0 via-violet-500/5 to-violet-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+        {/* Search Bar - Top Row */}
+        <div className="w-full z-10 relative">
+          <input
+            type="text"
+            placeholder="Search deployments by title, description, or stack..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-slate-900/40 border border-white/5 hover:border-white/10 focus:border-violet-500/40 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all duration-300"
+          />
+        </div>
+
+        {/* Second Row: Categories (Left) & Slider (Right) */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 w-full z-10 relative">
+          {/* Category Toggles */}
+          <div className="flex flex-wrap gap-2">
+            {["All", "Frontend Templates", "Full-Stack Web Apps"].map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 text-xs font-mono uppercase tracking-widest transition-all duration-300 rounded-lg border ${
+                  selectedCategory === category
+                    ? "bg-violet-600/20 border-violet-500/30 text-violet-200 shadow-[0_0_15px_rgba(124,58,237,0.15)]"
+                    : "bg-slate-900/40 border-white/5 text-slate-400 hover:text-slate-300 hover:border-white/10 hover:bg-white/5"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {/* Price Slider */}
+          <div className="flex flex-col gap-2 w-full md:w-64 shrink-0">
+            <div className="flex justify-between items-center text-xs font-mono uppercase tracking-widest px-1">
+              <span className="text-slate-500">Max Budget</span>
+              <span className="text-violet-300 font-bold">${maxPrice.toLocaleString()}</span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max={highestPrice > 0 ? highestPrice : 10000}
+              step="50"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
+              className="w-full h-1.5 bg-slate-900/60 border border-white/5 rounded-lg appearance-none cursor-pointer accent-violet-500 hover:accent-violet-400 transition-all outline-none"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Grid Container */}
       <motion.div
         variants={containerVariants}
@@ -113,7 +192,16 @@ export function DeploymentCatalog({ projects = [] }: { projects?: Project[] }) {
         viewport={{ once: true, margin: "-100px" }}
         className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6"
       >
-        {displayProjects.map((project, index) => (
+        {filteredProjects.length === 0 ? (
+          <div className="col-span-full w-full bg-slate-950/40 backdrop-blur-xl border border-violet-500/20 rounded-3xl p-6 md:p-12 text-center flex flex-col items-center justify-center min-h-[300px] relative group overflow-hidden">
+            <div className="absolute -inset-px bg-gradient-to-r from-violet-500/0 via-violet-500/5 to-violet-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="w-12 h-12 rounded-full border border-white/5 border-t-violet-400 animate-spin mb-6 z-10"></div>
+            <h3 className="text-white text-xl font-bold mb-2 z-10">No Deployments Found</h3>
+            <p className="text-slate-500 font-mono text-sm uppercase tracking-widest z-10">
+              Adjust your filters to discover systems.
+            </p>
+          </div>
+        ) : filteredProjects.map((project, index) => (
           <motion.div
             key={project.id}
             variants={cardVariants}
