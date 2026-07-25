@@ -1,4 +1,5 @@
 "use server";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -11,7 +12,7 @@ export async function createProject(prevState: any, formData: FormData) {
     const description = formData.get("description") as string;
     const purpose = formData.get("purpose") as string;
     const audience = formData.get("audience") as string;
-    const total_cost_str = formData.get("total_cost") as string;
+    const total_cost_str = (formData.get("totalCost") || formData.get("total_cost")) as string;
     const live_url = formData.get("live_url") as string;
     const category = formData.get("category") as string;
     const latency = formData.get("latency") as string;
@@ -22,9 +23,9 @@ export async function createProject(prevState: any, formData: FormData) {
       return { success: false, message: "All fields are required." };
     }
 
-    const total_cost = parseFloat(total_cost_str);
+    const total_cost = parseInt(total_cost_str, 10);
     if (isNaN(total_cost)) {
-      return { success: false, message: "Total cost must be a valid number." };
+      return { success: false, message: "Total cost must be a valid integer." };
     }
 
     const project = await prisma.project.create({
@@ -52,7 +53,7 @@ export async function updateProject(id: string, prevState: any, formData: FormDa
     const description = formData.get("description") as string;
     const purpose = formData.get("purpose") as string;
     const audience = formData.get("audience") as string;
-    const total_cost_str = formData.get("total_cost") as string;
+    const total_cost_str = (formData.get("totalCost") || formData.get("total_cost")) as string;
     const live_url = formData.get("live_url") as string;
     const category = formData.get("category") as string;
     const latency = formData.get("latency") as string;
@@ -63,9 +64,9 @@ export async function updateProject(id: string, prevState: any, formData: FormDa
       return { success: false, message: "All fields are required." };
     }
 
-    const total_cost = parseFloat(total_cost_str);
+    const total_cost = parseInt(total_cost_str, 10);
     if (isNaN(total_cost)) {
-      return { success: false, message: "Total cost must be a valid number." };
+      return { success: false, message: "Total cost must be a valid integer." };
     }
 
     await prisma.project.update({

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useRef } from "react";
 
@@ -187,7 +188,7 @@ export default function AdminNewProjectPage() {
             {/* Total Cost */}
             <div className="space-y-2">
               <label className="text-xs font-mono text-slate-400 uppercase tracking-wider block">Total Cost ($)</label>
-              <input required type="number" step="0.01" name="total_cost" className="w-full bg-slate-900/50 border border-white/10 p-3 rounded-xl text-white focus:border-[#D946EF] outline-none transition-colors font-mono" />
+              <input required type="number" step="1" name="totalCost" className="w-full bg-zinc-950 border border-zinc-800 p-3 rounded-lg text-white focus:border-[#D946EF] outline-none transition-colors font-mono" />
             </div>
 
             {/* Live URL */}
@@ -199,7 +200,10 @@ export default function AdminNewProjectPage() {
             {/* Category */}
             <div className="space-y-2">
               <label className="text-xs font-mono text-slate-400 uppercase tracking-wider block">Category</label>
-              <input type="text" name="category" placeholder="e.g. Web App, AI Agent" className="w-full bg-slate-900/50 border border-white/10 p-3 rounded-xl text-white focus:border-[#D946EF] outline-none transition-colors" />
+              <select name="category" className="w-full bg-zinc-950 border border-zinc-800 p-3 rounded-lg text-white focus:border-[#D946EF] outline-none transition-colors appearance-none cursor-pointer">
+                <option value="Frontend Templates">Frontend Templates</option>
+                <option value="Full-Stack Web Apps">Full-Stack Web Apps</option>
+              </select>
             </div>
 
             {/* Latency */}

@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowUpRight, Cpu, X } from "lucide-react";
@@ -17,7 +18,7 @@ type DisplayProject = {
   status: string;
   metrics: { latency: string; throughput: string };
   category: string;
-  price: number;
+  totalCost: number;
 };
 
 export function DeploymentCatalog({ projects = [] }: { projects?: Project[] }) {
@@ -26,7 +27,11 @@ export function DeploymentCatalog({ projects = [] }: { projects?: Project[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const highestPrice = projects.reduce((max, p) => Math.max(max, p.price || 0), 0);
+  // Calculate highest price only once when projects load so slider doesn't reset
+  const highestPrice = useMemo(() => {
+    return projects.reduce((max, p) => Math.max(max, p.total_cost || 0), 0);
+  }, [projects]);
+
   const [maxPrice, setMaxPrice] = useState(highestPrice > 0 ? highestPrice : 10000);
 
   useEffect(() => {
@@ -59,24 +64,27 @@ export function DeploymentCatalog({ projects = [] }: { projects?: Project[] }) {
       throughput: p.throughput || "420 req/s"
     },
     category: p.category || "Uncategorized",
-    price: p.price || 0,
+    totalCost: p.total_cost || 0,
   }));
 
-  const filteredProjects = displayProjects.filter(p => {
-    const matchesSearch = 
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.techStack.join(" ").toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const safeProjectCat = (p.category || "Uncategorized").toLowerCase();
-    const safeSelectedCat = selectedCategory.toLowerCase();
-    const matchesCategory = selectedCategory === "All" || safeProjectCat === safeSelectedCat;
-    
-    const safePrice = p.price || 0;
-    const matchesPrice = safePrice <= maxPrice;
-    
-    return matchesSearch && matchesCategory && matchesPrice;
-  });
+  // Pure function filtering logic using useMemo
+  const filteredProjects = useMemo(() => {
+    return displayProjects.filter(p => {
+      const matchesSearch = 
+        p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.techStack.join(" ").toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const safeProjectCat = (p.category || "Uncategorized").toLowerCase();
+      const safeSelectedCat = selectedCategory.toLowerCase();
+      const matchesCategory = selectedCategory === "All" || safeProjectCat === safeSelectedCat;
+      
+      const safePrice = p.totalCost || 0;
+      const matchesPrice = safePrice <= maxPrice;
+      
+      return matchesSearch && matchesCategory && matchesPrice;
+    });
+  }, [displayProjects, searchQuery, selectedCategory, maxPrice]);
 
   // Staggered entrance transition configurations
   const containerVariants = {
@@ -351,11 +359,20 @@ export function DeploymentCatalog({ projects = [] }: { projects?: Project[] }) {
                       </div>
                     </div>
 
-                    {/* Title & Description */}
+                    {/* Title, Description & Total Cost Header */}
                     <div>
-                      <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
-                        {selectedProject.title}
-                      </h2>
+                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
+                          {selectedProject.title}
+                        </h2>
+                        {/* Dynamic Total Cost Display */}
+                        <div className="shrink-0 flex flex-col items-end gap-1 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                          <span className="text-[9px] text-emerald-400/70 font-mono uppercase tracking-widest">Total Cost</span>
+                          <span className="text-xl md:text-2xl font-black text-emerald-400 font-mono">
+                            ${selectedProject.totalCost.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
                       <p className="text-sm md:text-base text-slate-400 leading-relaxed max-w-2xl">
                         {selectedProject.description}
                       </p>

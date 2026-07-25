@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -149,7 +150,8 @@ export function ProjectCatalogClient({ initialProjects }: ProjectCatalogClientPr
           description: formData.get("description") as string,
           purpose: formData.get("purpose") as string,
           audience: formData.get("audience") as string,
-          total_cost: parseFloat(formData.get("total_cost") as string),
+          total_cost: parseInt((formData.get("totalCost") || formData.get("total_cost")) as string, 10),
+          category: formData.get("category") as string,
           live_url: formData.get("live_url") as string,
           tech_stack: finalTechStack,
           latency: formData.get("latency") as string,
@@ -397,8 +399,15 @@ export function ProjectCatalogClient({ initialProjects }: ProjectCatalogClientPr
                   </div>
                 </div>
                 <div className="space-y-2">
+                  <label className="text-xs font-mono text-slate-400 uppercase tracking-wider block">Category</label>
+                  <select name="category" defaultValue={editingProject?.category || "Frontend Templates"} className="w-full bg-zinc-950 border border-zinc-800 p-3 rounded-lg text-white focus:border-[#D946EF] outline-none transition-colors appearance-none cursor-pointer">
+                    <option value="Frontend Templates">Frontend Templates</option>
+                    <option value="Full-Stack Web Apps">Full-Stack Web Apps</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
                   <label className="text-xs font-mono text-slate-400 uppercase tracking-wider block">Total Cost ($)</label>
-                  <input required type="number" step="0.01" name="total_cost" defaultValue={editingProject?.total_cost} className="w-full bg-slate-900/50 border border-white/10 p-3 rounded-xl text-white focus:border-[#D946EF] outline-none transition-colors font-mono text-base" />
+                  <input required type="number" step="1" name="totalCost" defaultValue={editingProject?.total_cost} className="w-full bg-zinc-950 border border-zinc-800 p-3 rounded-lg text-white focus:border-[#D946EF] outline-none transition-colors font-mono text-base" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-mono text-slate-400 uppercase tracking-wider block">Live URL</label>
